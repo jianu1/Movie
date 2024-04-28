@@ -10,23 +10,15 @@ import SwiftData
 
 @main
 struct MovieApp: App {
-    var sharedModelContainer: ModelContainer = {
-        let schema = Schema([
-            Item.self,
-        ])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
-
-        do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
-        } catch {
-            fatalError("Could not create ModelContainer: \(error)")
-        }
-    }()
 
     var body: some Scene {
+        let viewModelFactory = ViewModelFactory()
+
         WindowGroup {
-            ContentView()
+            ContentView(homeViewModel: viewModelFactory.makeHomeViewModel(),
+                        searchViewModel: viewModelFactory.makeSearchViewModel(),
+                        favoriteViewModel: viewModelFactory.makeFavoriteViewModel())
+            .environmentObject(viewModelFactory)
         }
-        .modelContainer(sharedModelContainer)
     }
 }
