@@ -31,6 +31,7 @@
 		90008B382BDEB1C500AE028A /* get_recommendation_response.json in Resources */ = {isa = PBXBuildFile; fileRef = 90008B352BDEB1C500AE028A /* get_recommendation_response.json */; };
 		90008B3B2BDEB27800AE028A /* MovieDetails.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90008B3A2BDEB27800AE028A /* MovieDetails.swift */; };
 		90008B472BDFA3B800AE028A /* MovieAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90008B462BDFA3B800AE028A /* MovieAPI.swift */; };
+		90008B4B2BDFF21F00AE028A /* Color+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 90008B4A2BDFF21F00AE028A /* Color+Extension.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -77,6 +78,7 @@
 		90008B352BDEB1C500AE028A /* get_recommendation_response.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = get_recommendation_response.json; sourceTree = "<group>"; };
 		90008B3A2BDEB27800AE028A /* MovieDetails.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieDetails.swift; sourceTree = "<group>"; };
 		90008B462BDFA3B800AE028A /* MovieAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieAPI.swift; sourceTree = "<group>"; };
+		90008B4A2BDFF21F00AE028A /* Color+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Extension.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -234,6 +236,7 @@
 			isa = PBXGroup;
 			children = (
 				90008B2E2BDEAB3500AE028A /* View+Extension.swift */,
+				90008B4A2BDFF21F00AE028A /* Color+Extension.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -411,6 +414,7 @@
 				90008B1B2BDEA2D300AE028A /* FavoriteViewModel.swift in Sources */,
 				90008B292BDEA7AA00AE028A /* CardView.swift in Sources */,
 				90008B212BDEA50100AE028A /* SearchView.swift in Sources */,
+				90008B4B2BDFF21F00AE028A /* Color+Extension.swift in Sources */,
 				90008B1F2BDEA31B00AE028A /* HomeView.swift in Sources */,
 				90008B272BDEA5C900AE028A /* MovieDetailsView.swift in Sources */,
 				90008B472BDFA3B800AE028A /* MovieAPI.swift in Sources */,

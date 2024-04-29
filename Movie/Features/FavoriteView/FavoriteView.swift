@@ -8,21 +8,33 @@
 import SwiftUI
 
 struct FavoriteView: View {
-    
     @ObservedObject var viewModel: FavoriteViewModel
     @EnvironmentObject var viewModelFactory: ViewModelFactory
-
+    
     var body: some View {
-        ScrollView {
-            LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: 10) {
-                ForEach(viewModel.favoriteMovies.movies) { movie in
-                    CardView(movie: movie, isFavorite: true, toggleFavorite: {
-                        viewModel.removeFavorite(movieID: movie)
-                    })
+        if viewModel.favoriteMovies.movies.isEmpty {
+            EmptyListView()
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+        } else {
+            ScrollView {
+                LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: 10) {
+                    ForEach(viewModel.favoriteMovies.movies) { movie in
+                        CardView(movie: movie, isFavorite: true, toggleFavorite: {
+                            viewModel.removeFavorite(movieID: movie)
+                        })
+                    }
                 }
+                .padding()
             }
-            .padding()
         }
+    }
+}
+
+struct EmptyListView: View {
+    var body: some View {
+        Text("Nu ai adăugat filme la favorite încă.")
+            .foregroundColor(.gray)
+            .multilineTextAlignment(.center)
     }
 }
 

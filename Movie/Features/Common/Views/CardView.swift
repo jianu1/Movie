@@ -13,9 +13,9 @@ struct CardView: View {
     var image: UIImage?
     var isFavorite: Bool
     var toggleFavorite: () -> Void
-
+    
     var body: some View {
-        VStack {
+        VStack(spacing: 0.0) {
             if let image = image {
                 Image(uiImage: image)
                     .resizable()
@@ -28,7 +28,6 @@ struct CardView: View {
                     .cornerRadius(5)
                     .overlay(Text("Loading..."))
             }
-            Spacer()
             HStack {
                 Text(movie.releaseDate.prefix(4))
                     .font(.system(size: 14, weight: .semibold))
@@ -49,6 +48,8 @@ struct CardView: View {
 
             }
             .padding(.horizontal, 14)
+            .frame(width: 180, height: 40)
+            
         }
         .frame(width: 180, height: 310)
         .background(.white)
@@ -57,16 +58,16 @@ struct CardView: View {
 }
 
 #Preview {
-        // Definim un `State` pentru a simula starea de favorit
-        @State var isFavorite = true
-        
-        // Returnăm un CardView în care furnizăm starea de favorit și o implementare a toggleFavorite
-        return CardView(
-            movie: Movie(id: 123, voteCount: 1, video: false, voteAverage: 8.6, title: "MR.Robot", popularity: 7.34, posterPath: "", originalLanguage: "English", originalTitle: "English", genreIds: [18,22], backdropPath: "", adult: false, overview: "", releaseDate: "2016-08-28"),
-            isFavorite: isFavorite,
-            // Implementăm toggleFavorite pentru a schimba starea de favorit în previzualizare
-            toggleFavorite: {
-                isFavorite.toggle()
-            }
-        )
+    // Definim un `State` pentru a simula starea de favorit
+    @State var isFavorite = true
+    
+    // Returnăm un CardView în care furnizăm starea de favorit și o implementare a toggleFavorite
+    return CardView(
+        movie: Movie(id: 123, voteCount: 1, video: false, voteAverage: 8.6, title: "MR.Robot", popularity: 7.34, posterPath: "", originalLanguage: "English", originalTitle: "English", genreIds: [18,22], backdropPath: "", adult: false, overview: "", releaseDate: "2016-08-28"),
+        isFavorite: isFavorite,
+        // Implementăm toggleFavorite pentru a schimba starea de favorit în previzualizare
+        toggleFavorite: {
+            isFavorite.toggle()
+        }
+    )
 }

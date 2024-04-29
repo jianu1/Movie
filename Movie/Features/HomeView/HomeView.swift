@@ -22,7 +22,7 @@ struct HomeView: View {
             }
             .padding()
         }
-        .background(.gray)
+        .background(Color.lightGrayBlue)
         .task {
             await viewModel.loadData()
         }

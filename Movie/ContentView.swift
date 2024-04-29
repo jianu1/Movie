@@ -26,5 +26,6 @@ struct ContentView: View {
                 .environmentObject(favoriteViewModel)
                 .tabItem { Text("Favorites") }
         }
+        .background(Color.black)
     }
 }
