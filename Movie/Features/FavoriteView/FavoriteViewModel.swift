@@ -31,4 +31,10 @@ final class FavoriteViewModel: ObservableObject {
             }
             .store(in: &cancellables)
     }
+    
+    func removeFavorite(movieID: Movie) {
+        if let index = favoriteMovies.movies.firstIndex(of: movieID) {
+            favoriteMovies.movies.remove(at: index)
+        }
+    }
 }

@@ -15,15 +15,15 @@ struct HomeView: View {
         ScrollView {
             LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: 10) {
                 ForEach(viewModel.movies) { movie in
-                    CardView(movie: movie, isFavorite: viewModel.isFavorite(movieID: movie), toggleFavorite: {
+                    CardView(movie: movie,image: viewModel.images[movie.id] ,isFavorite: viewModel.isFavorite(movieID: movie), toggleFavorite: {
                         viewModel.toggleFavorite(movieID: movie)
                     })
                 }
             }
             .padding()
         }
-        .onAppear {
-            viewModel.loadData()
+        .task {
+            await viewModel.loadData()
         }
     }
 }

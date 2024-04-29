@@ -10,15 +10,25 @@ import SwiftUI
 struct CardView: View {
     
     let movie: Movie
+    var image: UIImage?
     var isFavorite: Bool
-    var toggleFavorite: () -> Void // Funcție pentru a inversa starea de favorit
+    var toggleFavorite: () -> Void
 
     var body: some View {
         VStack {
-            Image(movie.posterPath)
-                .resizable()
-                .frame(width: 180, height: 270)
-                .cornerRadius(5, corners: .allCorners)
+            if let image = image {
+                Image(uiImage: image)
+                    .resizable()
+                    .frame(width: 180, height: 270)
+                    .cornerRadius(5)
+            } else {
+                Rectangle()
+                    .fill(Color.gray.opacity(0.3))
+                    .frame(width: 180, height: 270)
+                    .cornerRadius(5)
+                    .overlay(Text("Loading..."))
+            }
+            Spacer()
             HStack {
                 Text(movie.releaseDate.prefix(4))
                     .font(.system(size: 14, weight: .semibold))

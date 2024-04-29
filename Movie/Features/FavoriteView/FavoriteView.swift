@@ -14,10 +14,11 @@ struct FavoriteView: View {
 
     var body: some View {
         ScrollView {
-            VStack {
+            LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: 10) {
                 ForEach(viewModel.favoriteMovies.movies) { movie in
-                    // Afiseaza fiecare film favorit intr-o celula sau un alt tip de vizualizare
-                    Text(movie.title)
+                    CardView(movie: movie, isFavorite: true, toggleFavorite: {
+                        viewModel.removeFavorite(movieID: movie)
+                    })
                 }
             }
             .padding()

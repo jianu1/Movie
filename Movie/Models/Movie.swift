@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Foundation
 
 struct Movie: Codable, Identifiable, Equatable {
     let id: Int
@@ -40,8 +39,15 @@ struct Movie: Codable, Identifiable, Equatable {
         case overview
         case releaseDate = "release_date"
     }
+    
+    var fullPosterURL: URL? {
+        return URL(string: "https://image.tmdb.org/t/p/w500\(posterPath)")
+    }
+
 }
 
 struct MoviesResponse: Decodable {
     let results: [Movie]
 }
+
+

@@ -16,8 +16,10 @@ protocol HomeViewModelProtocol {
 
 class HomeViewModel: ObservableObject {
     @Published var movies: [Movie]
+    @Published var images: [Int: UIImage] = [:]
     var movieController: MovieController
     @ObservedObject var favoriteMovies: FavoriteMovies
+    private var movieAPI = MovieAPI()
     
     private var cancellables = Set<AnyCancellable>()
     
@@ -35,20 +37,36 @@ class HomeViewModel: ObservableObject {
             .store(in: &cancellables)
     }
 
-    func loadData() {
-        if let fileURL = Bundle.main.url(forResource: "get_recommendation_response", withExtension: "json") {
-            do {
-                let data = try Data(contentsOf: fileURL)
-                let decodedResponse = try JSONDecoder().decode(MoviesResponse.self, from: data)
-                self.movies = decodedResponse.results
-            } catch {
-                print("Eroare la încărcarea datelor: \(error)")
+    func loadData() async {
+        do {
+            let fetchedMovies = try await movieAPI.getRecommendations(type: .popular)
+            await MainActor.run {
+                self.movies = fetchedMovies
+                self.loadImages(for: fetchedMovies)
             }
-        } else {
-            print("Fișierul JSON nu a fost găsit")
+        } catch {
+            print("Failed to load movies: \(error)")
         }
     }
     
+    private func loadImages(for movies: [Movie]) {
+        for movie in movies {
+            guard let url = movie.fullPosterURL else { continue }
+            Task {
+                do {
+                    let (data, _) = try await URLSession.shared.data(from: url)
+                    if let image = UIImage(data: data) {
+                        await MainActor.run {
+                            self.images[movie.id] = image
+                        }
+                    }
+                } catch {
+                    print("Error loading image for \(movie.title): \(error)")
+                }
+            }
+        }
+    }
+
     // Funcție pentru a verifica dacă un film este favorit
     func isFavorite(movieID: Movie) -> Bool {
         return movieController.isFavorite(movieID: movieID)
