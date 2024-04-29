@@ -16,12 +16,13 @@ struct HomeView: View {
             LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: 10) {
                 ForEach(viewModel.movies) { movie in
                     CardView(movie: movie,image: viewModel.images[movie.id] ,isFavorite: viewModel.isFavorite(movieID: movie), toggleFavorite: {
-                        viewModel.toggleFavorite(movieID: movie)
+                        viewModel.toggleFavorite(movie: movie)
                     })
                 }
             }
             .padding()
         }
+        .navigationTitle("Home")
         .background(Color.lightGrayBlue)
         .task {
             await viewModel.loadData()

@@ -18,6 +18,10 @@ final class FavoriteViewModel: ObservableObject {
     
     @Published var favoriteMovies: FavoriteMovies
     
+    var images: [Int: UIImage] {
+        favoriteMovies.images
+    }
+
     private var cancellables = Set<AnyCancellable>()
 
     init(favoriteMovies: FavoriteMovies) {
@@ -33,8 +37,6 @@ final class FavoriteViewModel: ObservableObject {
     }
     
     func removeFavorite(movieID: Movie) {
-        if let index = favoriteMovies.movies.firstIndex(of: movieID) {
-            favoriteMovies.movies.remove(at: index)
-        }
+        favoriteMovies.removeFavorite(movie: movieID)
     }
 }

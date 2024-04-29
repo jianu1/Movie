@@ -19,7 +19,7 @@ struct FavoriteView: View {
             ScrollView {
                 LazyVGrid(columns: Array(repeating: GridItem(.flexible()), count: 2), spacing: 10) {
                     ForEach(viewModel.favoriteMovies.movies) { movie in
-                        CardView(movie: movie, isFavorite: true, toggleFavorite: {
+                        CardView(movie: movie, image: viewModel.images[movie.id],isFavorite: true, toggleFavorite: {
                             viewModel.removeFavorite(movieID: movie)
                         })
                     }

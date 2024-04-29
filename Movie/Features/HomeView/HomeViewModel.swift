@@ -73,9 +73,15 @@ class HomeViewModel: ObservableObject {
     }
     
     // Funcție pentru a face toggle pe un film favorit
-    func toggleFavorite(movieID: Movie) {
-        movieController.toggleFavorite(movieID: movieID)
+    func toggleFavorite(movie: Movie) {
+        if movieController.isFavorite(movieID: movie) {
+            movieController.favoriteMovies.removeFavorite(movie: movie)
+        } else {
+            let image = images[movie.id]
+            movieController.favoriteMovies.addFavorite(movie: movie, withImage: image)
+        }
     }
+
 
 }
 
@@ -115,8 +121,30 @@ class ViewModelFactory: ObservableObject {
 
 
 class FavoriteMovies: ObservableObject {
-    @Published var movies: [Movie] = [] {
-        didSet {
+    @Published var movies: [Movie] = []
+    @Published var images: [Int: UIImage] = [:] // Dicționar pentru a stoca imagini asociate cu filmele
+
+    // Actualizăm lista de favorite și imagini
+    func addFavorite(movie: Movie, withImage image: UIImage?) {
+        if !movies.contains(movie) {
+            movies.append(movie)
+            images[movie.id] = image
+            objectWillChange.send()
+        }
+    }
+
+    func removeFavorite(movie: Movie) {
+        if let index = movies.firstIndex(of: movie) {
+            movies.remove(at: index)
+            images.removeValue(forKey: movie.id)
+            objectWillChange.send()
+        }
+    }
+
+    // Adăugăm o metodă pentru actualizarea imaginilor separat, dacă este necesar
+    func updateImage(for movieId: Int, image: UIImage) {
+        if let index = movies.firstIndex(where: { $0.id == movieId }) {
+            images[movieId] = image
             objectWillChange.send()
         }
     }
