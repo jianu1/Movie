@@ -51,7 +51,7 @@ struct CardView: View {
             .padding(.horizontal, 14)
         }
         .frame(width: 180, height: 310)
-        .background(.green)
+        .background(.white)
         .cornerRadius(5, corners: .allCorners)
     }
 }
