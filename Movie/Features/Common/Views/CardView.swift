@@ -35,7 +35,7 @@ struct CardView: View {
                 HStack {
                     Image("ic_star")
                         .frame(width: 14, height: 14)
-                    Text(String(movie.voteAverage))
+                    Text(String(movie.voteAverage).toFormattedNumberString(maxFractionDigits: 1) ?? "")
                         .font(.system(size: 14, weight: .semibold))
                 }
                 Spacer()
@@ -58,10 +58,8 @@ struct CardView: View {
 }
 
 #Preview {
-    // Definim un `State` pentru a simula starea de favorit
     @State var isFavorite = true
     
-    // Returnăm un CardView în care furnizăm starea de favorit și o implementare a toggleFavorite
     return CardView(
         movie: Movie(id: 123, voteCount: 1, video: false, voteAverage: 8.6, title: "MR.Robot", popularity: 7.34, posterPath: "", originalLanguage: "English", originalTitle: "English", genreIds: [18,22], backdropPath: "", adult: false, overview: "", releaseDate: "2016-08-28"),
         isFavorite: isFavorite,

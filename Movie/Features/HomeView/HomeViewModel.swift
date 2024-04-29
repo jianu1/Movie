@@ -15,12 +15,14 @@ protocol HomeViewModelProtocol {
 }
 
 class HomeViewModel: ObservableObject {
+    
+    @ObservedObject var favoriteMovies: FavoriteMovies
+
     @Published var movies: [Movie]
     @Published var images: [Int: UIImage] = [:]
+    @Published var segments: [MovieCategory] = [.nowPlaying, .popular, .topRated, .upcoming]
     var movieController: MovieController
-    @ObservedObject var favoriteMovies: FavoriteMovies
     private var movieAPI = MovieAPI()
-    
     private var cancellables = Set<AnyCancellable>()
     
     init(movieController: MovieController) {
@@ -29,7 +31,6 @@ class HomeViewModel: ObservableObject {
         
         movies = movieController.favoriteMovies.movies
         
-        // Observăm modificările în lista favoriteMovies.movies
         favoriteMovies.objectWillChange
             .sink { [weak self] _ in
                 self?.objectWillChange.send()
@@ -37,7 +38,7 @@ class HomeViewModel: ObservableObject {
             .store(in: &cancellables)
     }
 
-    func loadData() async {
+    func loadData(type: RecommendationType) async {
         do {
             let fetchedMovies = try await movieAPI.getRecommendations(type: .popular)
             await MainActor.run {
@@ -66,13 +67,58 @@ class HomeViewModel: ObservableObject {
             }
         }
     }
+    
+    func handleSelection(category: MovieCategory) async {
+        switch category {
+        case .nowPlaying:
+            do {
+                let fetchedMovies = try await movieAPI.getRecommendations(type: .nowPlaying)
+                await MainActor.run {
+                    self.movies = fetchedMovies
+                    self.loadImages(for: fetchedMovies)
+                }
+            } catch {
+                print("Failed to load movies: \(error)")
+            }
 
-    // Funcție pentru a verifica dacă un film este favorit
+        case .popular:
+            do {
+                let fetchedMovies = try await movieAPI.getRecommendations(type: .popular)
+                await MainActor.run {
+                    self.movies = fetchedMovies
+                    self.loadImages(for: fetchedMovies)
+                }
+            } catch {
+                print("Failed to load movies: \(error)")
+            }
+        case .topRated:
+            do {
+                let fetchedMovies = try await movieAPI.getRecommendations(type: .topRated)
+                await MainActor.run {
+                    self.movies = fetchedMovies
+                    self.loadImages(for: fetchedMovies)
+                }
+            } catch {
+                print("Failed to load movies: \(error)")
+            }
+        case .upcoming:
+            do {
+                let fetchedMovies = try await movieAPI.getRecommendations(type: .upcoming)
+                await MainActor.run {
+                    self.movies = fetchedMovies
+                    self.loadImages(for: fetchedMovies)
+                }
+            } catch {
+                print("Failed to load movies: \(error)")
+            }
+        }
+    }
+
+
     func isFavorite(movieID: Movie) -> Bool {
         return movieController.isFavorite(movieID: movieID)
     }
     
-    // Funcție pentru a face toggle pe un film favorit
     func toggleFavorite(movie: Movie) {
         if movieController.isFavorite(movieID: movie) {
             movieController.favoriteMovies.removeFavorite(movie: movie)
@@ -81,71 +127,35 @@ class HomeViewModel: ObservableObject {
             movieController.favoriteMovies.addFavorite(movie: movie, withImage: image)
         }
     }
-
-
-}
-
-
-class MovieController: ObservableObject {
-    @Published private(set) var favoriteMovies = FavoriteMovies()
     
-    // Funcție pentru a verifica dacă un film este favorit
-    func isFavorite(movieID: Movie) -> Bool {
-        return favoriteMovies.movies.contains(movieID)
-    }
-    
-    func toggleFavorite(movieID: Movie) {
-        if let index = favoriteMovies.movies.firstIndex(of: movieID) {
-            favoriteMovies.movies.remove(at: index)
-        } else {
-            favoriteMovies.movies.append(movieID)
+    func sortMovies(by option: SortOption) {
+        switch option {
+        case .ratingAscending:
+            movies.sort { $0.voteAverage < $1.voteAverage }
+        case .ratingDescending:
+            movies.sort { $0.voteAverage > $1.voteAverage }
+        case .releaseDateAscending:
+            movies.sort {
+                guard let date0 = dateFromString($0.releaseDate), let date1 = dateFromString($1.releaseDate) else { return false }
+                return date0 < date1
+            }
+        case .releaseDateDescending:
+            movies.sort {
+                guard let date0 = dateFromString($0.releaseDate), let date1 = dateFromString($1.releaseDate) else { return false }
+                return date0 > date1
+            }
         }
     }
 }
 
-class ViewModelFactory: ObservableObject {
-    let movieController = MovieController()
-    
-    func makeHomeViewModel() -> HomeViewModel {
-        return HomeViewModel(movieController: movieController)
-    }
-    
-    func makeSearchViewModel() -> SearchViewModel {
-        return SearchViewModel()
-    }
-    
-    func makeFavoriteViewModel() -> FavoriteViewModel {
-        return FavoriteViewModel(favoriteMovies: movieController.favoriteMovies)
-    }
+enum SortOption {
+    case ratingAscending, ratingDescending, releaseDateAscending, releaseDateDescending
 }
 
-
-class FavoriteMovies: ObservableObject {
-    @Published var movies: [Movie] = []
-    @Published var images: [Int: UIImage] = [:] // Dicționar pentru a stoca imagini asociate cu filmele
-
-    // Actualizăm lista de favorite și imagini
-    func addFavorite(movie: Movie, withImage image: UIImage?) {
-        if !movies.contains(movie) {
-            movies.append(movie)
-            images[movie.id] = image
-            objectWillChange.send()
-        }
-    }
-
-    func removeFavorite(movie: Movie) {
-        if let index = movies.firstIndex(of: movie) {
-            movies.remove(at: index)
-            images.removeValue(forKey: movie.id)
-            objectWillChange.send()
-        }
-    }
-
-    // Adăugăm o metodă pentru actualizarea imaginilor separat, dacă este necesar
-    func updateImage(for movieId: Int, image: UIImage) {
-        if let index = movies.firstIndex(where: { $0.id == movieId }) {
-            images[movieId] = image
-            objectWillChange.send()
-        }
+extension HomeViewModel {
+    private func dateFromString(_ dateString: String) -> Date? {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        return dateFormatter.date(from: dateString)
     }
 }

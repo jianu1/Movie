@@ -27,10 +27,8 @@ final class FavoriteViewModel: ObservableObject {
     init(favoriteMovies: FavoriteMovies) {
         self.favoriteMovies = favoriteMovies
 
-        // Ascultăm orice modificare în lista de filme favorite
         favoriteMovies.$movies
             .sink { [weak self] _ in
-                // Actualizăm UI-ul când lista de filme favorite se modifică
                 self?.objectWillChange.send()
             }
             .store(in: &cancellables)
